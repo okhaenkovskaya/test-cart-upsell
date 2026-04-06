@@ -119,6 +119,7 @@ cart-drawer:not(.is-empty) .cart-drawer__collection {
   padding: 1.5rem 0;
 }
 
+cart-drawer-items.is-empty ~ .drawer__footer,
 cart-drawer-items.is-empty + .drawer__footer {
   display: none;
 }
