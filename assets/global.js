@@ -1065,7 +1065,6 @@ class ProductRecommendations extends HTMLElement {
 customElements.define('product-recommendations', ProductRecommendations);
 
 
-
 class CartUpsellRecommendations extends HTMLElement {
   constructor() {
     super();
@@ -1078,7 +1077,7 @@ class CartUpsellRecommendations extends HTMLElement {
         observer.unobserve(this);
         this.loadAndRender();
       }
-    });
+    }, { rootMargin: '0px 0px 400px 0px' });
 
     observer.observe(this);
 
@@ -1129,12 +1128,12 @@ customElements.define('cart-upsell-recommendations', CartUpsellRecommendations);
 
 
 window.initUpsellVariantPickers = function (root = document) {
-  root.querySelectorAll('.upsell-variant-picker input[type="radio"]').forEach(radio => {
+  root.querySelectorAll('.product-form__variants input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', e => {
-      const wrapper = e.target.closest('.upsell-variant-picker');
+      const wrapper = e.target.closest('.product-form__variants');
       const radios = wrapper.querySelector('variant-radios');
-      const form = wrapper.closest('.upsell-card')?.querySelector('form');
-      const input = form.querySelector('.upsell-selected-variant-id');
+      const form = wrapper.closest('.upsell-list__item')?.querySelector('form');
+      const input = form.querySelector('.upsell-card__variant-id');
 
       const variants = JSON.parse(radios.querySelector('script[type="application/json"]').textContent.trim());
 
@@ -1163,9 +1162,62 @@ window.initUpsellVariantPickers = function (root = document) {
 
 
 function updateUpsellButtonLocal(wrapper, variant) {
-  console.log('updateUpsellButtonLocal');
+  const productId = wrapper.dataset.productId;
+  const button = wrapper.closest('.upsell-list__item')
+    ?.querySelector(`#ProductSubmitButton-${wrapper.dataset.section}-${productId} button`);
+  const buttonText = button.querySelector('span')
+
+  if (!button) return;
+
+  if (variant.available) {
+    button.disabled = false;
+    button.classList.remove('sold-out');
+    buttonText.textContent = 'Add to cart';
+  } else {
+    button.disabled = true;
+    button.classList.add('sold-out');
+    buttonText.textContent = 'Sold out';
+  }
 }
 
+
+function formatMoney(cents) {
+  if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
+    const moneyFormat =
+      window.theme?.moneyFormat ||
+      Shopify.currency?.active_format ||
+      Shopify.currency?.money_format ||
+      "{{amount}}";
+
+    return Shopify.formatMoney(cents, moneyFormat);
+  }
+
+  const symbol = window.shopCurrencySymbol || "";
+  return symbol + (cents / 100).toFixed(2);
+}
+
+
+
+
 function updateUpsellPriceLocal(wrapper, variant) {
-  console.log('updateUpsellPriceLocal');
+  const productId = wrapper.dataset.productId;
+  const priceRoot = wrapper.closest('.upsell-list__item')?.querySelector(`#upsell-price-${productId}`);
+  if (!priceRoot) return;
+
+  const regularEl = priceRoot.querySelector('.price-item--regular');
+  const saleEl = priceRoot.querySelector('.price-item--sale');
+  const priceContainer = priceRoot.querySelector('.price');
+
+  const price = variant.price;
+  const compare = variant.compare_at_price;
+
+  if (compare && compare > price) {
+    priceContainer.classList.add('price--on-sale');
+    if (regularEl) regularEl.innerHTML = `<s>${formatMoney(compare)}</s>`;
+    if (saleEl) saleEl.textContent = formatMoney(price);
+  } else {
+    priceContainer.classList.remove('price--on-sale');
+    if (regularEl) regularEl.textContent = formatMoney(price);
+    if (saleEl) saleEl.textContent = '';
+  }
 }
