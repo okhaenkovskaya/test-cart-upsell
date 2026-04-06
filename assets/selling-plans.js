@@ -33,6 +33,5 @@ window.ProductSubscriptions = ProductSubscriptions;
 
 window.getCurrentSellingPlanId = function() {
   const productSubscriptions = document.querySelector('product-subscriptions');
-  console.log(productSubscriptions)
   return productSubscriptions ? productSubscriptions.getCurrentSellingPlanId() : '';
 };
