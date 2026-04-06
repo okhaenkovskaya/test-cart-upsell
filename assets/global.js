@@ -1063,3 +1063,109 @@ class ProductRecommendations extends HTMLElement {
 }
 
 customElements.define('product-recommendations', ProductRecommendations);
+
+
+
+class CartUpsellRecommendations extends HTMLElement {
+  constructor() {
+    super();
+    this.sectionId = this.dataset.sectionId;
+  }
+
+  connectedCallback() {
+    const observer = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting) {
+        observer.unobserve(this);
+        this.loadAndRender();
+      }
+    });
+
+    observer.observe(this);
+
+    document.addEventListener('cart:updated', () => this.loadAndRender());
+  }
+
+  async loadAndRender() {
+    const firstProductId = await this.getFirstProductId();
+    if (!firstProductId) {
+      this.innerHTML = '';
+      return;
+    }
+
+    const html = await this.loadRecommendations(firstProductId);
+    if (!html) return;
+
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    const section = temp.querySelector(`#shopify-section-${this.sectionId}`);
+    if (!section) return;
+
+    this.innerHTML = section.innerHTML;
+    this.classList.add('cart-upsell--loaded');
+
+    window.initUpsellVariantPickers?.(this);
+  }
+
+  async getFirstProductId() {
+    try {
+      const cart = await fetch('/cart.js').then(r => r.json());
+      return cart.items[0]?.product_id;
+    } catch {
+      return null;
+    }
+  }
+
+  async loadRecommendations(productId) {
+    try {
+      return await fetch(`/recommendations/products?product_id=${productId}&section_id=${this.sectionId}`).then(r => r.text());
+    } catch {
+      return null;
+    }
+  }
+}
+
+customElements.define('cart-upsell-recommendations', CartUpsellRecommendations);
+
+
+window.initUpsellVariantPickers = function (root = document) {
+  root.querySelectorAll('.upsell-variant-picker input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', e => {
+      const wrapper = e.target.closest('.upsell-variant-picker');
+      const radios = wrapper.querySelector('variant-radios');
+      const form = wrapper.closest('.upsell-card')?.querySelector('form');
+      const input = form.querySelector('.upsell-selected-variant-id');
+
+      const variants = JSON.parse(radios.querySelector('script[type="application/json"]').textContent.trim());
+
+      const selectedOptions = [...wrapper.querySelectorAll('fieldset')].map(fs =>
+        fs.querySelector('input[type="radio"]:checked')?.value
+      );
+
+      const variant = variants.find(v =>
+        v.options.every((opt, i) => opt === selectedOptions[i])
+      );
+
+      if (!variant) return;
+
+      input.value = variant.id;
+      radios.currentVariant = variant;
+
+      if (typeof radios.onVariantChange === 'function') {
+        radios.onVariantChange();
+      }
+
+      updateUpsellPriceLocal(wrapper, variant);
+      updateUpsellButtonLocal(wrapper, variant);
+    });
+  });
+};
+
+
+function updateUpsellButtonLocal(wrapper, variant) {
+  console.log('updateUpsellButtonLocal');
+}
+
+function updateUpsellPriceLocal(wrapper, variant) {
+  console.log('updateUpsellPriceLocal');
+}
