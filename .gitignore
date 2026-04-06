@@ -1,0 +1,22 @@
+# Shopify CLI
+.shopify/
+.shopify-cli.yml
+
+# Node dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# JetBrains IDE files
+.idea/
+*.iml
+
+# OS junk
+.DS_Store
+
+# Env files
+.env
+.env.*
