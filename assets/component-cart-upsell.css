@@ -66,7 +66,7 @@ variant-radios{
 }
 
 .upsell-card__option input[type='radio'] + label {
-  border: var(--variant-pills-border-width) solid rgba(var(--color-foreground), var(--variant-pills-border-opacity));
+  border: 1px solid rgba(var(--color-foreground), 0.2);
   background-color: rgb(var(--color-background));
   color: rgba(var(--color-foreground));
   border-radius: var(--variant-pills-radius);
@@ -82,19 +82,8 @@ variant-radios{
   position: relative;
 }
 
-.upsell-card__option input[type='radio'] + label:before {
-  content: '';
-  position: absolute;
-  top: calc(var(--variant-pills-border-width) * -1);
-  right: calc(var(--variant-pills-border-width) * -1);
-  bottom: calc(var(--variant-pills-border-width) * -1);
-  left: calc(var(--variant-pills-border-width) * -1);
-  z-index: -1;
-  border-radius: var(--variant-pills-radius);
-  box-shadow: var(--variant-pills-shadow-horizontal-offset) var(--variant-pills-shadow-vertical-offset) var(--variant-pills-shadow-blur-radius) rgba(var(--color-shadow), var(--variant-pills-shadow-opacity));
-}
 
-.upsell-card__option input[type='radio'] + label:hover {
+.upsell-card__option input[type='radio']:not(:checked) + label:hover {
   border-color: rgb(var(--color-foreground));
 }
 
@@ -113,10 +102,6 @@ variant-radios{
   }
 }
 
-.upsell-card__option input[type='radio']:checked + label::selection {
-  background-color: rgba(var(--color-background), 0.3);
-}
-
 .upsell-card__option input[type='radio']:disabled + label,
 .upsell-card__option input[type='radio'].disabled + label {
   border-color: rgba(var(--color-foreground), 0.1);
@@ -127,8 +112,4 @@ variant-radios{
 .upsell-card__option input[type='radio'].disabled:checked + label,
 .upsell-card__option input[type='radio']:disabled:checked + label {
   color: rgba(var(--color-background), 0.6);
-}
-.upsell-card__option input[type='radio']:focus-visible + label {
-  box-shadow: 0 0 0 0.3rem rgb(var(--color-background)),
-  0 0 0 0.5rem rgba(var(--color-foreground), 0.55);
 }
