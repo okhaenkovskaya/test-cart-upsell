@@ -51,10 +51,10 @@
             </div>
 
             <div
-                    class="upsell-card__variants product-form__variants"
-                    data-section="{{ section.id }}"
-                    data-product-id="{{ product.id }}"
-                    data-url="{{ product.url }}"
+                class="upsell-card__variants"
+                data-section="{{ section.id }}"
+                data-product-id="{{ product.id }}"
+                data-url="{{ product.url }}"
             >
               {% if product.variants.size > 1 %}
                 <variant-radios
@@ -65,7 +65,7 @@
                 >
                   {% for option in product.options_with_values %}
                     <fieldset class="upsell-card__option">
-                      <legend class="upsell-card__option-label">{{ option.name | escape }}</legend>
+                      <legend class="upsell-card__option-label visually-hidden">{{ option.name | escape }}</legend>
 
                       {% render 'upsell-variant-options', product: product, option: option %}
                     </fieldset>
