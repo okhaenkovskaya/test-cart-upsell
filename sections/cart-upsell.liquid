@@ -8,12 +8,12 @@
           {% if product.featured_media %}
             <div class="upsell-card__media">
               <img
-                  src="{{ product.featured_media | image_url: width: 300 }}"
-                  alt="{{ product.featured_media.alt | escape }}"
-                  loading="lazy"
-                  width="300"
-                  height="{{ 300 | divided_by: product.featured_media.aspect_ratio | round }}"
-                  class="upsell-card__image"
+                      src="{{ product.featured_media | image_url: width: 300 }}"
+                      alt="{{ product.featured_media.alt | escape }}"
+                      loading="lazy"
+                      width="300"
+                      height="{{ 300 | divided_by: product.featured_media.aspect_ratio | round }}"
+                      class="upsell-card__image"
               >
             </div>
           {% endif %}
@@ -27,26 +27,34 @@
             {% assign price = variant.price %}
             {% assign compare = variant.compare_at_price %}
 
-            <div class="upsell-card__price{% if compare > price %} upsell-card__price--sale{% endif %}">
-              {% if compare > price %}
-                <span class="upsell-card__price-compare">
-                  <s>{{ compare | money }}</s>
-                </span>
-                <span class="upsell-card__price-current">
-                  {{ price | money }}
-                </span>
-              {% else %}
-                <span class="upsell-card__price-current">
-                  {{ price | money }}
-                </span>
-              {% endif %}
+            <div id="upsell-price-{{ product.id }}">
+              <div class="price{% if compare > price %} price--on-sale{% endif %}">
+                <div class="price__container">
+                  {% if compare > price %}
+                    <div class="price__sale">
+                      <span class="price-item price-item--regular">
+                        <s>{{ compare | money }}</s>
+                      </span>
+                      <span class="price-item price-item--sale price-item--last">
+                        {{ price | money }}
+                      </span>
+                    </div>
+                  {% else %}
+                    <div class="price__regular">
+                      <span class="price-item price-item--regular">
+                        {{ price | money }}
+                      </span>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
             </div>
 
             <div
-              class="upsell-card__variants"
-              data-section="{{ section.id }}"
-              data-product-id="{{ product.id }}"
-              data-url="{{ product.url }}"
+                    class="upsell-card__variants product-form__variants"
+                    data-section="{{ section.id }}"
+                    data-product-id="{{ product.id }}"
+                    data-url="{{ product.url }}"
             >
               {% if product.variants.size > 1 %}
                 <variant-radios
@@ -56,7 +64,7 @@
                         data-product-id="{{ product.id }}"
                 >
                   {% for option in product.options_with_values %}
-                    <fieldset class="upsell-card__option product-form__input">
+                    <fieldset class="upsell-card__option">
                       <legend class="upsell-card__option-label">{{ option.name | escape }}</legend>
 
                       {% render 'upsell-variant-options', product: product, option: option %}
@@ -72,31 +80,35 @@
 
             <product-form class="upsell-card__form">
               {% form 'product', product, class: 'upsell-card__form-inner', novalidate: 'novalidate' %}
-                <input
-                  type="hidden"
-                  name="id"
-                  class="upsell-card__variant-id"
-                  value="{{ variant.id }}"
-                >
-                <button
-                  type="submit"
-                  class="upsell-card__button button button--secondary"
-                  {% unless variant.available %}disabled aria-disabled="true"{% endunless %}
-                >
-                  <span class="upsell-card__button-text">
-                    {{ 'products.product.add_to_cart' | t }}
-                  </span>
 
-                  <span class="upsell-card__spinner loading-overlay__spinner hidden" aria-hidden="true">
-                    <svg
-                      class="spinner"
-                      viewBox="0 0 66 66"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                    </svg>
-                  </span>
-                </button>
+                <input
+                        type="hidden"
+                        name="id"
+                        class="upsell-card__variant-id"
+                        value="{{ variant.id }}"
+                >
+
+                <div id="ProductSubmitButton-{{ section.id }}-{{ product.id }}">
+                  <button
+                          type="submit"
+                          class="upsell-card__button button button--secondary"
+                          {% unless variant.available %}disabled aria-disabled="true"{% endunless %}
+                  >
+                    <span class="upsell-card__button-text">
+                      {{ 'products.product.add_to_cart' | t }}
+                    </span>
+
+                    <span class="upsell-card__spinner loading-overlay__spinner hidden" aria-hidden="true">
+                      <svg
+                              class="spinner"
+                              viewBox="0 0 66 66"
+                              xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
               {% endform %}
             </product-form>
           </div>
@@ -105,7 +117,6 @@
     {% endfor %}
   </ul>
 {% endif %}
-
 
 {% schema %}
 {
