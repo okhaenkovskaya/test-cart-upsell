@@ -1,5 +1,7 @@
 class UpsellVariantPicker {
   constructor(root) {
+    if (!root) return;
+
     this.root = root;
     this.init();
   }
