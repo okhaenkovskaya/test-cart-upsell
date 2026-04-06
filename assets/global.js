@@ -1072,14 +1072,13 @@ class CartUpsellRecommendations extends HTMLElement {
   }
 
   connectedCallback() {
-    const observer = new IntersectionObserver(entries => {
+    this.observer = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting) {
-        observer.unobserve(this);
         this.loadAndRender();
       }
-    });
+    }, { rootMargin: '0px 0px 200px 0px' });
 
-    observer.observe(this);
+    this.observer.observe(this);
 
     document.addEventListener('cart:updated', () => this.loadAndRender());
   }
@@ -1104,6 +1103,8 @@ class CartUpsellRecommendations extends HTMLElement {
     this.classList.add('cart-upsell--loaded');
 
     window.initUpsellVariantPickers?.(this);
+
+    this.observer.unobserve(this);
   }
 
   async getFirstProductId() {
