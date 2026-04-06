@@ -1,0 +1,48 @@
+{%- liquid
+  assign variants_available = product.variants | map: 'available'
+  assign opt1 = product.variants | map: 'option1'
+  assign opt2 = product.variants | map: 'option2'
+  assign opt3 = product.variants | map: 'option3'
+-%}
+
+{% for value in option.values %}
+  {%- liquid
+    assign disabled = true
+
+    for o1 in opt1
+      case option.position
+        when 1
+          if opt1[forloop.index0] == value and variants_available[forloop.index0]
+            assign disabled = false
+          endif
+        when 2
+          if o1 == product.selected_or_first_available_variant.option1
+            if opt2[forloop.index0] == value and variants_available[forloop.index0]
+              assign disabled = false
+            endif
+          endif
+        when 3
+          if o1 == product.selected_or_first_available_variant.option1
+            if opt2[forloop.index0] == product.selected_or_first_available_variant.option2
+              if opt3[forloop.index0] == value and variants_available[forloop.index0]
+                assign disabled = false
+              endif
+            endif
+          endif
+      endcase
+    endfor
+  -%}
+
+  <input
+          type="radio"
+          id="upsell-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}"
+          name="upsell-option-{{ product.id }}-{{ option.position }}"
+          value="{{ value | escape }}"
+          {% if option.selected_value == value %}checked{% endif %}
+    {% if disabled %}class="disabled"{% endif %}
+  >
+
+  <label for="upsell-{{ product.id }}-{{ option.position }}-{{ forloop.index0 }}">
+    {{ value }}
+  </label>
+{% endfor %}
