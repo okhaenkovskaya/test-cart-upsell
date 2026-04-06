@@ -1128,9 +1128,9 @@ customElements.define('cart-upsell-recommendations', CartUpsellRecommendations);
 
 
 window.initUpsellVariantPickers = function (root = document) {
-  root.querySelectorAll('.product-form__variants input[type="radio"]').forEach(radio => {
+  root.querySelectorAll('.upsell-card__variants input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', e => {
-      const wrapper = e.target.closest('.product-form__variants');
+      const wrapper = e.target.closest('.upsell-card__variants');
       const radios = wrapper.querySelector('variant-radios');
       const form = wrapper.closest('.upsell-list__item')?.querySelector('form');
       const input = form.querySelector('.upsell-card__variant-id');
@@ -1195,8 +1195,6 @@ function formatMoney(cents) {
   const symbol = window.shopCurrencySymbol || "";
   return symbol + (cents / 100).toFixed(2);
 }
-
-
 
 
 function updateUpsellPriceLocal(wrapper, variant) {
