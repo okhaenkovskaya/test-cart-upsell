@@ -58,6 +58,7 @@
             >
               {% if product.variants.size > 1 %}
                 <variant-radios
+                        update-url="false"
                         class="upsell-card__variant-radios no-js-hidden"
                         data-section="{{ section.id }}"
                         data-url="{{ product.url }}"
@@ -82,10 +83,10 @@
               {% form 'product', product, class: 'upsell-card__form-inner', novalidate: 'novalidate' %}
 
                 <input
-                        type="hidden"
-                        name="id"
-                        class="upsell-card__variant-id"
-                        value="{{ variant.id }}"
+                  type="hidden"
+                  name="id"
+                  class="upsell-card__variant-id"
+                  value="{{ variant.id }}"
                 >
 
                 <div id="ProductSubmitButton-{{ section.id }}-{{ product.id }}">
