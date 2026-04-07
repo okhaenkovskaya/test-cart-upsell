@@ -3,46 +3,52 @@ class UpsellVariantPicker {
     if (!root) return;
 
     this.root = root;
+    this.wrappers = [...root.querySelectorAll('.upsell-card__variants')];
+
     this.init();
   }
 
   init() {
-    this.root
-      .querySelectorAll('.upsell-card__variants input[type="radio"]')
-      .forEach(radio => {
-        radio.addEventListener('change', e => this.onChange(e));
+    this.wrappers.forEach(wrapper => {
+      const radiosRoot = wrapper.querySelector('variant-radios');
+      if (!radiosRoot) return;
+
+      const jsonEl = radiosRoot.querySelector('script[type="application/json"]');
+      radiosRoot.variants = jsonEl ? JSON.parse(jsonEl.textContent.trim()) : [];
+
+      wrapper.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', e => this.onChange(e, wrapper, radiosRoot));
       });
+    });
   }
 
-  onChange(e) {
-    const wrapper = e.target.closest('.upsell-card__variants');
-    const radios = wrapper.querySelector('variant-radios');
+  onChange(e, wrapper, radiosRoot) {
     const form = wrapper.closest('.upsell-list__item')?.querySelector('form');
-    const input = form.querySelector('.upsell-card__variant-id');
+    if (!form) return;
 
-    const variants = JSON.parse(
-      radios.querySelector('script[type="application/json"]').textContent.trim()
-    );
+    const input = form.querySelector('.upsell-card__variant-id');
+    if (!input) return;
 
     const selectedOptions = [...wrapper.querySelectorAll('fieldset')].map(fs =>
       fs.querySelector('input[type="radio"]:checked')?.value
     );
 
-    const variant = variants.find(v =>
-      v.options.every((opt, i) => opt === selectedOptions[i])
-    );
-
+    const variant = this.findVariant(radiosRoot.variants, selectedOptions);
     if (!variant) return;
 
     input.value = variant.id;
-    radios.currentVariant = variant;
 
-    if (typeof radios.onVariantChange === 'function') {
-      radios.onVariantChange();
-    }
+    radiosRoot.currentVariant = variant;
+    radiosRoot.onVariantChange?.();
 
     this.updatePrice(wrapper, variant);
     this.updateButton(wrapper, variant);
+  }
+
+  findVariant(variants, selectedOptions) {
+    return variants.find(v =>
+      v.options.every((opt, i) => opt === selectedOptions[i])
+    );
   }
 
   updateButton(wrapper, variant) {
