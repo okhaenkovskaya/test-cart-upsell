@@ -59,15 +59,18 @@ class UpsellVariantPicker {
     if (!button) return;
 
     const buttonText = button.querySelector('span');
+    const addToCartLabel = button.dataset.addToCart || 'Add to cart';
+    const soldOutLabel = button.dataset.soldOut || 'Sold out';
+
 
     if (variant.available) {
       button.disabled = false;
       button.classList.remove('sold-out');
-      buttonText.textContent = 'Add to cart';
+      buttonText.textContent = addToCartLabel;
     } else {
       button.disabled = true;
       button.classList.add('sold-out');
-      buttonText.textContent = 'Sold out';
+      buttonText.textContent = soldOutLabel;
     }
   }
 

@@ -91,6 +91,8 @@
 
                 <div id="ProductSubmitButton-{{ section.id }}-{{ product.id }}">
                   <button
+                          data-add-to-cart="{{ 'products.product.add_to_cart' | t }}"
+                          data-sold-out="{{ 'products.product.sold_out' | t }}"
                           type="submit"
                           class="upsell-card__button button button--secondary"
                           {% unless variant.available %}disabled aria-disabled="true"{% endunless %}
