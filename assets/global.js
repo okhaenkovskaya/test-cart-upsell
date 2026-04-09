@@ -1116,16 +1116,21 @@ class CartUpsellRecommendations extends HTMLElement {
 
   async getFirstProductId() {
     try {
-      const cart = await fetch('/cart.js').then(r => r.json());
+      const response = await fetch('/cart.js');
+      const cart = await response.json();
       return cart.items[0]?.product_id;
     } catch {
       return null;
     }
+
   }
 
   async loadRecommendations(productId) {
     try {
-      return await fetch(`/recommendations/products?product_id=${productId}&section_id=${this.sectionId}`).then(r => r.text());
+      const response = await fetch(
+        `/recommendations/products?product_id=${productId}&section_id=${this.sectionId}`
+      );
+      return await response.text();
     } catch {
       return null;
     }
