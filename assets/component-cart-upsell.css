@@ -9,6 +9,10 @@
   margin: 0;
   list-style: none;
   border-top: .1rem solid rgba(var(--color-foreground), .2);
+
+  &.empty {
+    display: none;
+  }
 }
 
 .upsell-list__item {

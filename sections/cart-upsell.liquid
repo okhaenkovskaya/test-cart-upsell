@@ -1,7 +1,7 @@
 {% if recommendations.performed %}
   {% assign cart_product_ids = cart.items | map: 'product_id' %}
 
-  <ul class="upsell-list" role="list">
+  <ul class="upsell-list {% if recommendations.products.size == 0 %}empty{% endif %}" role="list">
     {% for product in recommendations.products %}
       {% unless cart_product_ids contains product.id %}
         <li class="upsell-list__item">
