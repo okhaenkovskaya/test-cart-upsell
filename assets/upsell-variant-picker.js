@@ -6,7 +6,6 @@ class UpsellVariantPicker {
     this.wrappers = [...root.querySelectorAll('.upsell-card__variants')];
 
     this.init();
-    this.initAjaxAddToCart();
   }
 
   init() {
@@ -21,71 +20,6 @@ class UpsellVariantPicker {
         radio.addEventListener('change', e => this.onChange(e, wrapper, radiosRoot));
       });
     });
-  }
-
-  initAjaxAddToCart() {
-    if (window.__upsellAjaxBound) return;
-    window.__upsellAjaxBound = true;
-
-    document.addEventListener('submit', async (e) => {
-      const form = e.target.closest('.upsell-list__item form');
-      if (!form) return;
-
-      e.preventDefault();
-      const formData = new FormData(form);
-
-      try {
-        await fetch('/cart/add.js', {
-          method: 'POST',
-          body: formData
-        });
-
-        const isCartPage =
-          document.body.classList.contains('template-cart') ||
-          window.location.pathname === '/cart';
-
-        if (isCartPage) {
-          await this.updateCartPage();
-        } else {
-          await this.updateCartDrawer();
-        }
-
-        document.dispatchEvent(new CustomEvent('cart:updated'));
-      } catch (err) {
-        console.error('Upsell AJAX add error:', err);
-      }
-    });
-  }
-
-
-  async updateCartDrawer() {
-    const drawer = document.querySelector('cart-drawer');
-    if (!drawer) return;
-
-    const res = await fetch(`${window.routes?.cart_url || '/cart'}?section_id=cart-drawer`);
-    if (!res.ok) return;
-
-    const html = await res.text();
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-
-    const newDrawer = temp.querySelector('cart-drawer');
-    if (newDrawer) drawer.innerHTML = newDrawer.innerHTML;
-  }
-
-  async updateCartPage() {
-    const cartItems = document.querySelector('cart-items');
-    if (!cartItems) return;
-
-    const res = await fetch(`${window.routes?.cart_url || '/cart'}?section_id=main-cart-items`);
-    if (!res.ok) return;
-
-    const html = await res.text();
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-
-    const newCart = temp.querySelector('cart-items');
-    if (newCart) cartItems.innerHTML = newCart.innerHTML;
   }
 
   onChange(e, wrapper, radiosRoot) {
@@ -127,6 +61,7 @@ class UpsellVariantPicker {
     const buttonText = button.querySelector('span');
     const addToCartLabel = button.dataset.addToCart || 'Add to cart';
     const soldOutLabel = button.dataset.soldOut || 'Sold out';
+
 
     if (variant.available) {
       button.disabled = false;
