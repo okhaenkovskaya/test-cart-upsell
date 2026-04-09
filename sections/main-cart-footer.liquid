@@ -93,10 +93,12 @@
     </div>
   </div>
 
-  <cart-upsell-recommendations
-          data-section-id="cart-upsell"
-          class="cart-upsell-block"
-  ></cart-upsell-recommendations>
+  {%- if cart != empty -%}
+    <cart-upsell-recommendations
+            data-section-id="cart-upsell"
+            class="cart-upsell-block"
+    ></cart-upsell-recommendations>
+  {%- endif -%}
 </div>
 
 <script>
