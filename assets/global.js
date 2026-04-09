@@ -1088,6 +1088,25 @@ class CartUpsellRecommendations extends HTMLElement {
     this.observer.observe(this);
 
     document.addEventListener('cart:updated', () => this.loadAndRender());
+
+
+    const cartItems = document.querySelector('cart-items');
+
+    if (cartItems) {
+      const mutationObserver = new MutationObserver(() => {
+        clearTimeout(this._cartMutationTimeout);
+        this._cartMutationTimeout = setTimeout(() => {
+          this.loadAndRender();
+        }, 50);
+      });
+
+      mutationObserver.observe(cartItems, {
+        childList: true,
+        subtree: true,
+      });
+
+      this._cartItemsObserver = mutationObserver;
+    }
   }
 
   async loadAndRender() {

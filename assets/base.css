@@ -3147,3 +3147,8 @@ details-disclosure > details {
     100% { transform: rotate(360deg) translateX(1em) rotate(-360deg) scale(1.2); }
   }
 }
+
+.header__icon--cart.is-disabled {
+  pointer-events: none;
+  cursor: default;
+}
