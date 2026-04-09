@@ -1140,16 +1140,6 @@ class CartUpsellRecommendations extends HTMLElement {
 customElements.define('cart-upsell-recommendations', CartUpsellRecommendations);
 
 window.formatMoney = function (cents) {
-  if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
-    const moneyFormat =
-      window.theme?.moneyFormat ||
-      Shopify.currency?.active_format ||
-      Shopify.currency?.money_format ||
-      "{{amount}}";
-
-    return Shopify.formatMoney(cents, moneyFormat);
-  }
-
   const symbol = window.shopCurrencySymbol || "";
   return symbol + (cents / 100).toFixed(2);
 };
