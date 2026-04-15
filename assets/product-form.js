@@ -18,11 +18,17 @@ if (!customElements.get('product-form')) {
     async ensureCartDrawer() {
       if (this.cart) return;
       try {
-        const res = await fetch(`${window.routes?.cart_url || '/cart'}?section_id=cart-drawer`, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+        const res = await fetch(
+          `${window.routes?.cart_url || '/cart'}?section_id=cart-drawer`,
+          { credentials: 'same-origin' }
+        );
+
         if (!res.ok) return;
+
         const html = await res.text();
         const temp = document.createElement('div');
         temp.innerHTML = html;
+
         const newDrawer = temp.querySelector('cart-drawer');
         if (newDrawer) {
           document.body.appendChild(newDrawer);
@@ -31,6 +37,7 @@ if (!customElements.get('product-form')) {
       } catch (e) {
         console.error(e);
       }
+
     }
 
     onSubmitHandler(evt) {
