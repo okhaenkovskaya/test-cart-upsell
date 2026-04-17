@@ -312,6 +312,8 @@
               {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
             {%- when 'buy_buttons' -%}
               {%- render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true -%}
+
+
             {%- when 'rating' -%}
               {%- if product.metafields.reviews.rating.value != blank -%}
                 {% liquid
@@ -439,7 +441,20 @@
           {{ 'products.product.view_full_details' | t }}
           {% render 'icon-arrow' %}
         </a>
+
+
+        {%- assign main_stock = product.selected_or_first_available_variant.metafields.custom.main_stock -%}
+        {%- assign pre_order_stock = product.selected_or_first_available_variant.metafields.custom.pre_order_stock -%}
+
+        <div class="variant-stock-message" data-variant-stock>
+          {%- if main_stock > 0 -%}
+            <p>{{ main_stock }} items available for instant delivery</p>
+          {%- elsif main_stock == 0 and pre_order_stock > 0 -%}
+            <p>Pre-order only</p>
+          {%- endif -%}
+        </div>
       </product-info>
+
     </div>
     {%- if section.settings.media_position == 'right' -%}
       {% comment %} Duplicate gallery to display after product content on tablet/desktop breakpoint {% endcomment %}

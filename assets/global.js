@@ -957,6 +957,13 @@ class VariantSelects extends HTMLElement {
         const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
         this.toggleAddButton(addButtonUpdated ? addButtonUpdated.hasAttribute('disabled') : true, window.variantStrings.soldOut);
 
+        const updatedStock = html.querySelector('.variant-stock-message');
+        const currentStock = document.querySelector('.variant-stock-message');
+
+        if (updatedStock && currentStock) {
+          currentStock.innerHTML = updatedStock.innerHTML;
+        }
+
         publish(PUB_SUB_EVENTS.variantChange, {data: {
           sectionId,
           html,
